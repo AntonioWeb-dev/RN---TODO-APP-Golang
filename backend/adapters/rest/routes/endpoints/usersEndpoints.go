@@ -1,14 +1,12 @@
 package endpoints
 
-import (
-	"api/src/controllers"
-)
+import "api/adapters/rest/controllers/user"
 
 var userEndpoints = []Route{
 	{
 		URI:            "/users",
 		Method:         "POST",
-		Controller:     controllers.CreateUser,
+		Controller:     user.CreateUser,
 		Authentication: false,
 	},
 }

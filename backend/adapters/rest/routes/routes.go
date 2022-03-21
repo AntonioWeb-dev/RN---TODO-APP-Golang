@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"api/src/routes/endpoints"
+	"api/adapters/rest/routes/endpoints"
 
 	"github.com/gorilla/mux"
 )

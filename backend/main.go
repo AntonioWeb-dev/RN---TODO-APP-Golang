@@ -1,12 +1,7 @@
 package main
 
-import (
-	"api/src/routes"
-	"log"
-	"net/http"
-)
+import "api/adapters/rest"
 
 func main() {
-	r := routes.CreateRoutes()
-	log.Fatal(http.ListenAndServe(":8080", r))
+	rest.Init()
 }
