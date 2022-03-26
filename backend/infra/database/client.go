@@ -8,12 +8,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var userCollection *mongo.Collection
+type MongoDB struct {
+	UserCollection *mongo.Collection
+}
 
-var ctx = context.TODO()
-
-func Init(url, dbname string) {
-	clientOptions := options.Client().ApplyURI("mongo://root:example@localhost:27017/")
+func Init(url, dbname string, ctx context.Context) MongoDB {
+	clientOptions := options.Client().ApplyURI(url)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -23,5 +23,7 @@ func Init(url, dbname string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	userCollection = client.Database("todoapp").Collection("users")
+	var m MongoDB
+	m.UserCollection = client.Database(dbname).Collection("users")
+	return m
 }
