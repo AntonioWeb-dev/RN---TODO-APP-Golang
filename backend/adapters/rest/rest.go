@@ -13,7 +13,7 @@ import (
 var ctx = context.TODO()
 
 func Init() {
-	db := database.Init("mongodb://root:example@localhost:27017/", "todoapp", ctx)
+	db := database.Init("mongodb://root:example@localhost:27018/", "todoapp", ctx)
 	userRepository := User.InitRepo(ctx, db.UserCollection)
 
 	r := routes.CreateRoutes(userRepository)

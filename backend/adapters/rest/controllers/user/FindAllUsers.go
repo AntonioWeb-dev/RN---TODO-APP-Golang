@@ -19,6 +19,7 @@ func (controller *FindAllUsersRequest) Handler(w http.ResponseWriter, r *http.Re
 	users, err := controller.findAllUsersCase.Handler()
 	if err != nil {
 		controllers.Error(w, http.StatusInternalServerError, err)
+		return
 	}
 	controllers.JSON(w, http.StatusCreated, users)
 }

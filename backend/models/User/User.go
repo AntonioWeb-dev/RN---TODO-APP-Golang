@@ -1,28 +1,29 @@
 package User
 
 import (
+	"api/helpers/hash"
 	"errors"
 	"strings"
 	"time"
 
 	"github.com/badoux/checkmail"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Task struct {
-	ID          int64     `json:"_id" bson:"_id"`
-	Title       string    `json:"title" bson:"title,omitempty"`
-	Done        bool      `json:"done" bson:"done,omitempty"`
-	Priority    int       `json:"priority" bson:"priority,omitempty"`
-	Estimate_at time.Time `json:"estimate_at" bson:"estimate_at,omitempty"`
-	Create_at   time.Time `json:"create_at" bson:"create_at,omitempty"`
+	ObjectID    primitive.ObjectID `json:"-" bson:"_id"`
+	ID          string             `json:"_id" bson:"-"`
+	Title       string             `json:"title" bson:"title,omitempty"`
+	Done        bool               `json:"done" bson:"done,omitempty"`
+	Priority    int                `json:"priority" bson:"priority,omitempty"`
+	Estimate_at time.Time          `json:"estimate_at" bson:"estimate_at,omitempty"`
+	Create_at   time.Time          `json:"create_at" bson:"create_at,omitempty"`
 }
 
 // User - user model
 type UserModel struct {
 	ObjectID primitive.ObjectID `json:"-" bson:"_id"`
-	ID       string             `bson:"-"`
+	ID       string             `json:"_id" bson:"-"`
 	Name     string             `json:"name" bson:"name,omitempty"`
 	Username string             `json:"username" bson:"username,omitempty"`
 	Tasks    []Task             `json:"tasks" bson:"tasks,omitempty"`
@@ -66,11 +67,11 @@ func (user *UserModel) format(step string) error {
 	user.Password = strings.TrimSpace(user.Password)
 
 	if step == "create" {
-		passwordHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		passwordHash, err := hash.GenerateHash(user.Password)
 		if err != nil {
 			return err
 		}
-		user.Password = string(passwordHash)
+		user.Password = passwordHash
 	}
 	return nil
 }

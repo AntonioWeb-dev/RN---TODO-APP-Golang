@@ -20,10 +20,12 @@ func (controller *CreateUserRequest) Handler(w http.ResponseWriter, r *http.Requ
 	bodyReq, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		controllers.Error(w, 400, err)
+		return
 	}
 	err, stts := controller.createUserCase.Handler(bodyReq)
 	if err != nil {
 		controllers.Error(w, stts, err)
+		return
 	}
 
 	controllers.JSON(w, http.StatusCreated, nil)
