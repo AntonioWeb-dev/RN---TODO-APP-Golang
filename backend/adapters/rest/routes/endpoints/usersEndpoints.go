@@ -3,11 +3,11 @@ package endpoints
 import (
 	"api/adapters/rest/controllers/task"
 	"api/adapters/rest/controllers/user"
-	"api/models/User"
+	userRepo "api/infra/repository/user"
 	"api/models/User/useCases"
 )
 
-func InitUserRoutes(userRepository User.Repository) []Route {
+func InitUserRoutes(userRepository userRepo.Repository) []Route {
 	createUserRequest := user.InitControllerCreateUser(useCases.InitCreateUserCase(userRepository))
 	findAllUsersRequest := user.InitControllerFindAllUsers(useCases.InitFindAllUsersCase(userRepository))
 	findUserByIdRequest := user.InitControllerFindUserById(useCases.InitFindUserByIdCase(userRepository))
@@ -31,7 +31,7 @@ func InitUserRoutes(userRepository User.Repository) []Route {
 			URI:            "/users/{id}",
 			Method:         "GET",
 			Controller:     findUserByIdRequest.Handler,
-			Authentication: false,
+			Authentication: true,
 		},
 		{
 			URI:            "/users/login",
