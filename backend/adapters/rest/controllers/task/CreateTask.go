@@ -4,17 +4,17 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"api/adapters/rest/controllers"
+	"api/helpers/response"
 	"api/models/User/useCases"
 
 	"github.com/gorilla/mux"
 )
 
 type CreateTaskRequest struct {
-	createTaskCase useCases.CreateTask
+	createTaskCase useCases.ICreateTask
 }
 
-func InitControllerCreateTask(useCase useCases.CreateTask) *CreateTaskRequest {
+func InitControllerCreateTask(useCase useCases.ICreateTask) *CreateTaskRequest {
 	return &CreateTaskRequest{createTaskCase: useCase}
 }
 
@@ -22,13 +22,13 @@ func (controller *CreateTaskRequest) Handler(w http.ResponseWriter, r *http.Requ
 	params := mux.Vars(r)
 	bodyReq, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		controllers.Error(w, 400, err)
+		response.Error(w, 400, err)
 		return
 	}
 	err, stts := controller.createTaskCase.Handler(params["id"], bodyReq)
 	if err != nil {
-		controllers.Error(w, stts, err)
+		response.Error(w, stts, err)
 		return
 	}
-	controllers.JSON(w, 201, nil)
+	response.JSON(w, 201, nil)
 }

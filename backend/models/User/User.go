@@ -2,23 +2,13 @@ package User
 
 import (
 	"api/helpers/hash"
+	"api/models/Task"
 	"errors"
 	"strings"
-	"time"
 
 	"github.com/badoux/checkmail"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-type Task struct {
-	ObjectID    primitive.ObjectID `json:"-" bson:"_id"`
-	ID          string             `json:"_id" bson:"-"`
-	Title       string             `json:"title" bson:"title,omitempty"`
-	Done        bool               `json:"done" bson:"done,omitempty"`
-	Priority    int                `json:"priority" bson:"priority,omitempty"`
-	Estimate_at time.Time          `json:"estimate_at" bson:"estimate_at,omitempty"`
-	Create_at   time.Time          `json:"create_at" bson:"create_at,omitempty"`
-}
 
 // User - user model
 type UserModel struct {
@@ -26,7 +16,7 @@ type UserModel struct {
 	ID       string             `json:"_id" bson:"-"`
 	Name     string             `json:"name" bson:"name,omitempty"`
 	Username string             `json:"username" bson:"username,omitempty"`
-	Tasks    []Task             `json:"tasks" bson:"tasks,omitempty"`
+	Tasks    []Task.TaskModel   `json:"tasks" bson:"tasks,omitempty"`
 	Email    string             `json:"email" bson:"email,omitempty"`
 	Password string             `json:"password" bson:"password,omitempty"`
 }

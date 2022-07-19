@@ -1,14 +1,19 @@
 package useCases
 
 import (
+	"api/infra/repository/user"
 	"api/models/User"
 )
 
-type FindUserById struct {
-	userRepository User.Repository
+type IFindUserByIdCase interface {
+	Handler(id string) (*User.UserModel, int, error)
 }
 
-func InitFindUserByIdCase(userRepository User.Repository) *FindUserById {
+type FindUserById struct {
+	userRepository user.Repository
+}
+
+func InitFindUserByIdCase(userRepository user.Repository) IFindUserByIdCase {
 	return &FindUserById{userRepository: userRepository}
 }
 

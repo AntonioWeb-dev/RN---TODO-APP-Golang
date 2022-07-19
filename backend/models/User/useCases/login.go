@@ -5,15 +5,16 @@ import (
 
 	"api/helpers/hash"
 	"api/helpers/jwt"
+	"api/infra/repository/user"
 	"api/models/User"
 )
 
-type Login interface {
+type ILogin interface {
 	Handler(data []byte) (loginStruct, error)
 }
 
 type loginCase struct {
-	userRepo User.Repository
+	userRepo user.Repository
 }
 
 type loginStruct struct {
@@ -23,7 +24,7 @@ type loginStruct struct {
 	Name  string `json:"name,omitempty"`
 }
 
-func InitLoginCase(userRepo User.Repository) Login {
+func InitLoginCase(userRepo user.Repository) ILogin {
 	return &loginCase{userRepo: userRepo}
 }
 

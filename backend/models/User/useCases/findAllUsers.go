@@ -1,14 +1,19 @@
 package useCases
 
 import (
+	"api/infra/repository/user"
 	"api/models/User"
 )
 
-type FindAllUsers struct {
-	userRepository User.Repository
+type IFindAllUsersCase interface {
+	Handler() ([]*User.UserModel, error)
 }
 
-func InitFindAllUsersCase(userRepository User.Repository) *FindAllUsers {
+type FindAllUsers struct {
+	userRepository user.Repository
+}
+
+func InitFindAllUsersCase(userRepository user.Repository) IFindAllUsersCase {
 	return &FindAllUsers{userRepository}
 }
 func (useCase *FindAllUsers) Handler() ([]*User.UserModel, error) {

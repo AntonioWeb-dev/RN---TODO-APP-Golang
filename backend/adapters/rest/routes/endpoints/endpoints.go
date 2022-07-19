@@ -1,7 +1,8 @@
 package endpoints
 
 import (
-	"api/models/User"
+	"api/adapters/rest/middlewares"
+	"api/infra/repository/user"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -14,10 +15,16 @@ type Route struct {
 	Authentication bool
 }
 
-func ConfigRoutes(r *mux.Router, userRepository User.Repository) *mux.Router {
+func ConfigRoutes(r *mux.Router, userRepository user.Repository) *mux.Router {
 	routes := InitUserRoutes(userRepository)
 
 	for _, router := range routes {
+		if router.Authentication {
+			r.HandleFunc(
+				router.URI,
+				middlewares.Authorization(router.Controller),
+			).Methods(router.Method)
+		}
 		r.HandleFunc(router.URI, router.Controller).Methods(router.Method)
 	}
 	return r

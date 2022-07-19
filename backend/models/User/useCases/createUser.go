@@ -1,15 +1,20 @@
 package useCases
 
 import (
+	"api/infra/repository/user"
 	"api/models/User"
 	"encoding/json"
 )
 
-type CreateUser struct {
-	userRepository User.Repository
+type ICreateUserCase interface {
+	Handler(data []byte) (error, int)
 }
 
-func InitCreateUserCase(userRepository User.Repository) *CreateUser {
+type CreateUser struct {
+	userRepository user.Repository
+}
+
+func InitCreateUserCase(userRepository user.Repository) ICreateUserCase {
 	return &CreateUser{userRepository}
 }
 
