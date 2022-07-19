@@ -3,7 +3,7 @@ package rest
 import (
 	"api/adapters/rest/routes"
 	"api/infra/database"
-	"api/models/User"
+	"api/infra/repository/user"
 	"context"
 	"fmt"
 	"log"
@@ -14,7 +14,7 @@ var ctx = context.TODO()
 
 func Init() {
 	db := database.Init("mongodb://root:example@localhost:27018/", "todoapp", ctx)
-	userRepository := User.InitRepo(ctx, db.UserCollection)
+	userRepository := user.InitRepo(ctx, db.UserCollection)
 
 	r := routes.CreateRoutes(userRepository)
 	fmt.Println("Running on :8080")

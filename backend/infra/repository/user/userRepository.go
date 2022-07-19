@@ -1,6 +1,8 @@
-package User
+package user
 
 import (
+	"api/models/Task"
+	"api/models/User"
 	"context"
 	"errors"
 	"time"
@@ -11,11 +13,11 @@ import (
 )
 
 type Repository interface {
-	CreateUser(user *UserModel) error
-	FindAll() ([]*UserModel, error)
-	FindByID(id string) (UserModel, error)
-	CreateTask(userId string, taskData *Task) error
-	FindByEmail(email string) (UserModel, error)
+	CreateUser(user *User.UserModel) error
+	FindAll() ([]*User.UserModel, error)
+	FindByID(id string) (User.UserModel, error)
+	CreateTask(userId string, taskData *Task.TaskModel) error
+	FindByEmail(email string) (User.UserModel, error)
 }
 
 type repository struct {
@@ -28,7 +30,7 @@ func InitRepo(ctx context.Context, userCollection *mongo.Collection) Repository 
 }
 
 // CreateUser - Store a new user in the database
-func (repo *repository) CreateUser(userData *UserModel) error {
+func (repo *repository) CreateUser(userData *User.UserModel) error {
 	ObjectID := primitive.NewObjectID()
 	userData.ObjectID = ObjectID
 	_, err := repo.userCollection.InsertOne(repo.ctx, userData)
@@ -36,7 +38,7 @@ func (repo *repository) CreateUser(userData *UserModel) error {
 }
 
 // CreateTask - Store a new user in the database
-func (repo *repository) CreateTask(userId string, taskData *Task) error {
+func (repo *repository) CreateTask(userId string, taskData *Task.TaskModel) error {
 	ObjectID := primitive.NewObjectID()
 	UserId, _ := primitive.ObjectIDFromHex(userId)
 	user, err := repo.FindByID(userId)
@@ -46,7 +48,7 @@ func (repo *repository) CreateTask(userId string, taskData *Task) error {
 
 	taskData.ObjectID = ObjectID
 	taskData.Create_at = time.Now()
-	var tasks []Task
+	var tasks []Task.TaskModel
 	if user.Tasks != nil {
 		tasks = append(user.Tasks, *taskData)
 	} else {
@@ -59,16 +61,16 @@ func (repo *repository) CreateTask(userId string, taskData *Task) error {
 	return err
 }
 
-func (repo *repository) FindAll() ([]*UserModel, error) {
+func (repo *repository) FindAll() ([]*User.UserModel, error) {
 	filter := bson.D{{}}
-	var users []*UserModel
+	var users []*User.UserModel
 	cur, err := repo.userCollection.Find(repo.ctx, filter)
 	if err != nil {
 		return users, err
 	}
 
 	for cur.Next(repo.ctx) {
-		var u UserModel
+		var u User.UserModel
 		err := cur.Decode(&u)
 		u.ID = u.ObjectID.Hex()
 		if u.Tasks != nil {
@@ -93,15 +95,15 @@ func (repo *repository) FindAll() ([]*UserModel, error) {
 	return users, nil
 }
 
-func (repo *repository) FindByID(id string) (UserModel, error) {
+func (repo *repository) FindByID(id string) (User.UserModel, error) {
 	primitiveID, _ := primitive.ObjectIDFromHex(id)
 	filter := bson.M{"_id": primitiveID}
-	var user UserModel
+	var user User.UserModel
 	err := repo.userCollection.FindOne(repo.ctx, filter).Decode(&user)
 	if err == mongo.ErrNilDocument {
-		return UserModel{}, errors.New("User not found")
+		return User.UserModel{}, errors.New("User not found")
 	} else if err != nil {
-		return UserModel{}, err
+		return User.UserModel{}, err
 	}
 	user.ID = user.ObjectID.Hex()
 	if user.Tasks != nil {
@@ -113,14 +115,14 @@ func (repo *repository) FindByID(id string) (UserModel, error) {
 	return user, nil
 }
 
-func (repo *repository) FindByEmail(email string) (UserModel, error) {
+func (repo *repository) FindByEmail(email string) (User.UserModel, error) {
 	filter := bson.M{"email": email}
-	var user UserModel
+	var user User.UserModel
 	err := repo.userCollection.FindOne(repo.ctx, filter).Decode(&user)
 	if err == mongo.ErrNilDocument {
-		return UserModel{}, errors.New("User not found")
+		return User.UserModel{}, errors.New("User not found")
 	} else if err != nil {
-		return UserModel{}, err
+		return User.UserModel{}, err
 	}
 	user.ID = user.ObjectID.Hex()
 	if user.Tasks != nil {

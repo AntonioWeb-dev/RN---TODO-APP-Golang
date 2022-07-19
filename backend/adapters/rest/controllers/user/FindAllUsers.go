@@ -3,23 +3,23 @@ package user
 import (
 	"net/http"
 
-	"api/adapters/rest/controllers"
+	"api/helpers/response"
 	"api/models/User/useCases"
 )
 
 type FindAllUsersRequest struct {
-	findAllUsersCase *useCases.FindAllUsers
+	findAllUsersCase useCases.IFindAllUsersCase
 }
 
-func InitControllerFindAllUsers(findAllUsersCase *useCases.FindAllUsers) *FindAllUsersRequest {
+func InitControllerFindAllUsers(findAllUsersCase useCases.IFindAllUsersCase) *FindAllUsersRequest {
 	return &FindAllUsersRequest{findAllUsersCase}
 }
 
 func (controller *FindAllUsersRequest) Handler(w http.ResponseWriter, r *http.Request) {
 	users, err := controller.findAllUsersCase.Handler()
 	if err != nil {
-		controllers.Error(w, http.StatusInternalServerError, err)
+		response.Error(w, http.StatusInternalServerError, err)
 		return
 	}
-	controllers.JSON(w, http.StatusCreated, users)
+	response.JSON(w, http.StatusCreated, users)
 }

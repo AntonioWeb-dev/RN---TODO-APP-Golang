@@ -8,21 +8,23 @@ import (
 )
 
 // VerifyToken - make the token's validation
-func VerifyToken(token, secret string) error {
+func VerifyToken(token, secret string) (string, error) {
+	signSecret := []byte(secret)
 	t, err := jwt.Parse(
 		token,
 		func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Sign method error")
 			}
-			return []byte(secret), nil
+			return signSecret, nil
 		},
 	)
 	if err != nil {
-		return err
+		return "", err
 	}
-	if _, ok := t.Claims.(jwt.MapClaims); ok && t.Valid {
-		return nil
+	if claims, ok := t.Claims.(jwt.MapClaims); ok && t.Valid {
+		userID := fmt.Sprintf("%v", claims["userId"])
+		return userID, nil
 	}
-	return errors.New("jwt invalid")
+	return "", errors.New("jwt invalid")
 }
